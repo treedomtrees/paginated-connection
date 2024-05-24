@@ -1,2 +1,2 @@
-# ts-package-template
-Template for new Typescript module libraries
+# paginated-connection
+Paginated connection utility library
