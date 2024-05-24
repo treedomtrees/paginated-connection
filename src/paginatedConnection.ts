@@ -1,11 +1,12 @@
-export type DataloaderArgs<TNode, TCursor> = {
+export type EncodeCursorProps<TNode> = {
+  node: TNode
+  getAfterValue: (node: TNode) => string
+}
+
+export type DataloaderArgs<TNode> = {
   after?: string
   first: number
-  encodeCursor: (
-    props: {
-      node: TNode
-    } & TCursor
-  ) => string
+  encodeCursor: (props: EncodeCursorProps<TNode>) => string
 }
 
 export type PaginationInput = {
@@ -19,15 +20,11 @@ export type PaginatedConnectionProps<
 > = {
   pagination: PaginationInput
   paginationSafeLimit: number
-  dataLoader: (props: DataloaderArgs<TNode, TCursor> & TCursor) => Promise<{
+  dataLoader: (props: DataloaderArgs<TNode> & TCursor) => Promise<{
     edges: { node: TNode; cursor: string }[]
     hasNextPage: boolean
   }>
-  encodeCursor: (
-    props: {
-      node: TNode
-    } & TCursor
-  ) => string
+  encodeCursor: (props: EncodeCursorProps<TNode>) => string
   decodeCursor: (cursor: string) => TCursor
   countLoader: (props: TCursor) => Promise<number>
 }
@@ -41,14 +38,12 @@ export const paginatedConnection = async <
 >(
   props: PaginatedConnectionProps<TNode, TCursor>
 ) => {
-  const { first, after } = props.pagination ?? {}
+  const { first, after } = props.pagination
 
   // Apply the safe limit or default when "first" is not provided
   const limit = getPaginationLimit(props.paginationSafeLimit, first)
 
-  // TODO remove any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let decodedCursor: TCursor = {} as any
+  let decodedCursor: TCursor = {} as TCursor
 
   if (after) {
     decodedCursor = props.decodeCursor(after)

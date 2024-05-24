@@ -1,2 +1,2 @@
-export * from './mongoDbPaginatedConnection'
+export * from './paginatedConnectionMongoDb'
 export * from './paginatedConnection'
