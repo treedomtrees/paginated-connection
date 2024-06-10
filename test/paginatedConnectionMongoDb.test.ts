@@ -55,7 +55,9 @@ tap.test(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getAfterValue: () => item._id.toHexString(),
+              getCursor: () => ({
+                after: item._id.toHexString(),
+              }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -82,7 +84,9 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getAfterValue: () => item._id.toHexString(),
+            getCursor: () => ({
+              after: item._id.toHexString(),
+            }),
           }),
         }
       }),
@@ -134,7 +138,7 @@ tap.test(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getAfterValue: () => item._id.toHexString(),
+              getCursor: () => ({ after: item._id.toHexString() }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -161,7 +165,7 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getAfterValue: () => item._id.toHexString(),
+            getCursor: () => ({ after: item._id.toHexString() }),
           }),
         }
       }),
@@ -205,7 +209,7 @@ tap.test(
       pagination: {
         after: encodeCursor({
           node: dataLoaderItems[1],
-          getAfterValue: () => dataLoaderItems[1]._id.toHexString(),
+          getCursor: () => ({ after: dataLoaderItems[1]._id.toHexString() }),
         }),
       },
       paginationSafeLimit: 100,
@@ -218,7 +222,7 @@ tap.test(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getAfterValue: () => item._id.toHexString(),
+              getCursor: () => ({ after: item._id.toHexString() }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -245,7 +249,7 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getAfterValue: () => item._id.toHexString(),
+            getCursor: () => ({ after: item._id.toHexString() }),
           }),
         }
       }),
@@ -290,7 +294,7 @@ tap.test(
         first: 2,
         after: encodeCursor({
           node: dataLoaderItems[1],
-          getAfterValue: () => dataLoaderItems[1]._id.toHexString(),
+          getCursor: () => ({ after: dataLoaderItems[1]._id.toHexString() }),
         }),
       },
       paginationSafeLimit: 100,
@@ -299,11 +303,11 @@ tap.test(
       },
       dataLoader: async (props) => {
         return {
-          edges: dataLoaderItems.slice(2, 4).map((item) => ({
+          edges: dataLoaderItems.slice(2, 5).map((item) => ({
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getAfterValue: () => item._id.toHexString(),
+              getCursor: () => ({ after: item._id.toHexString() }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -330,7 +334,7 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getAfterValue: () => item._id.toHexString(),
+            getCursor: () => ({ after: item._id.toHexString() }),
           }),
         }
       }),
@@ -384,7 +388,7 @@ tap.test(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getAfterValue: () => item._id.toHexString(),
+              getCursor: () => ({ after: item._id.toHexString() }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -411,7 +415,7 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getAfterValue: () => item._id.toHexString(),
+            getCursor: () => ({ after: item._id.toHexString() }),
           }),
         }
       }),
@@ -465,7 +469,7 @@ tap.only(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getAfterValue: () => item._id.toHexString(),
+              getCursor: () => ({ after: item._id.toHexString() }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -492,7 +496,7 @@ tap.only(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getAfterValue: () => item._id.toHexString(),
+            getCursor: () => ({ after: item._id.toHexString() }),
           }),
         }
       }),

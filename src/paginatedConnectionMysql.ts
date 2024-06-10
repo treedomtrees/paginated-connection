@@ -13,7 +13,7 @@ type PaginationInput = {
   first?: number
 }
 
-export type MongoDbPaginatedConnectionProps<
+export type MysqlPaginatedConnectionProps<
   TNode extends object,
   TCursor = { after: string },
 > = {
@@ -25,11 +25,11 @@ export type MongoDbPaginatedConnectionProps<
   paginationSafeLimit: number
 }
 
-export const mongoDbPaginatedConnection = async <
+export const mysqlPaginatedConnection = async <
   TNode extends object,
   TCursor extends TCursorBase = TCursorValueBase,
 >(
-  params: MongoDbPaginatedConnectionProps<TNode, TCursor>
+  params: MysqlPaginatedConnectionProps<TNode, TCursor>
 ) => {
   // Add +1 element for calculation of hasNextPage value
   const paginationSafeLimit = params.paginationSafeLimit + 1
@@ -72,10 +72,11 @@ export const mongoDbPaginatedConnection = async <
     },
   }
 }
+
 export const encodeCursor = <TNode, TCursor extends TCursorBase>({
   node,
   getCursor,
-}: EncodeCursorProps<TNode, TCursor>): string => {
+}: EncodeCursorProps<TNode, TCursor>) => {
   const cursorContent = new URLSearchParams()
 
   const cursorValues = getCursor(node)
