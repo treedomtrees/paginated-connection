@@ -5,8 +5,7 @@ export const decodeCursor = <TCursor = { after: string }>(cursor: string) => {
     ).entries()
 
     return Object.fromEntries(cursorParams) as TCursor
-  } /* c8 ignore start: malformed cursors simply return first page */ catch (err) {
+  } catch (err) {
     return {} as TCursor
-    /* c8 ignore end */
   }
 }

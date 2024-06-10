@@ -28,3 +28,8 @@ tap.test(
     })
   }
 )
+
+tap.test("should return empty object when cursor isn't valid", async (t) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t.same(decodeCursor(1111 as any), {})
+})
