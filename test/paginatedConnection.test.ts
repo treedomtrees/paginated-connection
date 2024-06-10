@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto'
 
 import tap from 'tap'
 import { paginatedConnection } from '../src/paginatedConnection'
+import { encodeCursor } from '../src/cursor'
 
 export type MysqlDoc = {
   id: string
@@ -81,3 +82,70 @@ tap.test(
     )
   }
 )
+
+tap.test('should dataloader handler get cursor data', async (t) => {
+  const dataLoaderItems = [
+    {
+      id: randomUUID(),
+      name: 'name1',
+      premium: true,
+    } as MysqlDoc,
+    {
+      id: randomUUID(),
+      name: 'name2',
+      premium: true,
+    } as MysqlDoc,
+    {
+      id: randomUUID(),
+      name: 'name3',
+      premium: true,
+    } as MysqlDoc,
+    {
+      id: randomUUID(),
+      name: 'name4',
+      premium: true,
+    } as MysqlDoc,
+    {
+      id: randomUUID(),
+      name: 'name5',
+      premium: true,
+    } as MysqlDoc,
+  ]
+
+  const data = await paginatedConnection<MysqlDoc>({
+    pagination: {
+      after: encodeCursor({
+        node: dataLoaderItems[0],
+        getCursor: () => ({
+          after: dataLoaderItems[0].id,
+        }),
+      }),
+      first: 1,
+    },
+    paginationSafeLimit: 100,
+    decodeCursor: () => ({ after: dataLoaderItems[0].id }),
+    encodeCursor: (cursor) => JSON.stringify(cursor),
+    countLoader: async () => {
+      return 5
+    },
+    dataLoader: async (props) => {
+      t.same(
+        props.cursor,
+        { after: dataLoaderItems[0].id },
+        'should match after value'
+      )
+      return {
+        edges: dataLoaderItems.slice(1, props.first).map((item) => ({
+          node: item,
+          cursor: props.encodeCursor({
+            node: item,
+            getCursor: () => ({
+              after: item.id,
+            }),
+          }),
+        })),
+        hasNextPage: dataLoaderItems.length > props.first,
+      }
+    },
+  })
+})

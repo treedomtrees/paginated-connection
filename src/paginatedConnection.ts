@@ -49,7 +49,7 @@ export const paginatedConnection = async <
   }
 
   const { edges, hasNextPage } = await props.dataLoader({
-    ...decodedCursor,
+    cursor: decodedCursor,
     encodeCursor: props.encodeCursor,
     first: limit,
   })
