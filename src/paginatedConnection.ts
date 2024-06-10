@@ -1,13 +1,12 @@
-export type EncodeCursorProps<TNode> = {
-  node: TNode
-  getAfterValue: (node: TNode) => string
+import { EncodeCursor, TCursorBase, TCursorValueBase } from './cursor'
+
+export type DataloaderProps<TNode, TCursor = { after: string }> = {
+  cursor?: TCursor
+  first: number
+  encodeCursor: EncodeCursor<TNode, TCursor>
 }
 
-export type DataloaderArgs<TNode> = {
-  after?: string
-  first: number
-  encodeCursor: (props: EncodeCursorProps<TNode>) => string
-}
+export type CountLoaderProps<TCursor = { after: string }> = { cursor?: TCursor }
 
 export type PaginationInput = {
   after?: string
@@ -15,30 +14,30 @@ export type PaginationInput = {
 }
 
 export type PaginatedConnectionProps<
-  TNode,
-  TCursor = Record<string, unknown>,
+  TNode extends object,
+  TCursor extends TCursorBase = TCursorValueBase,
 > = {
   pagination: PaginationInput
   paginationSafeLimit: number
-  dataLoader: (props: DataloaderArgs<TNode> & TCursor) => Promise<{
+  dataLoader: (props: DataloaderProps<TNode, TCursor>) => Promise<{
     edges: { node: TNode; cursor: string }[]
     hasNextPage: boolean
   }>
-  encodeCursor: (props: EncodeCursorProps<TNode>) => string
+  encodeCursor: EncodeCursor<TNode, TCursor>
   decodeCursor: (cursor: string) => TCursor
-  countLoader: (props: TCursor) => Promise<number>
+  countLoader: (props: CountLoaderProps<TCursor>) => Promise<number>
 }
 
 /**
  * Handles pagination to offset-style ordering returning Connection-style GQL result
  */
 export const paginatedConnection = async <
-  TNode,
-  TCursor = Record<string, unknown>,
+  TNode extends object,
+  TCursor extends TCursorBase = TCursorValueBase,
 >(
   props: PaginatedConnectionProps<TNode, TCursor>
 ) => {
-  const { first, after } = props.pagination
+  const { first, after } = props.pagination ?? {}
 
   // Apply the safe limit or default when "first" is not provided
   const limit = getPaginationLimit(props.paginationSafeLimit, first)
@@ -56,7 +55,7 @@ export const paginatedConnection = async <
   })
 
   return {
-    totalCount: () => props.countLoader({ ...decodedCursor }),
+    totalCount: async () => props.countLoader({ cursor: decodedCursor }),
     pageInfo: {
       endCursor: edges[edges.length - 1]?.cursor,
       hasNextPage,
@@ -65,7 +64,10 @@ export const paginatedConnection = async <
   }
 }
 
-const getPaginationLimit = (paginationSafeLimit: number, limit?: number) => {
+export const getPaginationLimit = (
+  paginationSafeLimit: number,
+  limit?: number
+) => {
   if (!limit) {
     return paginationSafeLimit
   }

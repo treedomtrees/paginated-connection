@@ -12,7 +12,7 @@ import {
   paginatedConnection,
 } from './paginatedConnection'
 
-export type MongoDbPaginatedConnectionProps<
+export type MysqlPaginatedConnectionProps<
   TNode extends object,
   TCursor = { after: string },
 > = {
@@ -24,11 +24,11 @@ export type MongoDbPaginatedConnectionProps<
   paginationSafeLimit: number
 }
 
-export const mongoDbPaginatedConnection = async <
+export const mysqlPaginatedConnection = async <
   TNode extends object,
   TCursor extends TCursorBase = TCursorValueBase,
 >(
-  props: MongoDbPaginatedConnectionProps<TNode, TCursor>
+  props: MysqlPaginatedConnectionProps<TNode, TCursor>
 ) => {
   // Add +1 element for calculation of hasNextPage value
   const paginationSafeLimit = props.paginationSafeLimit + 1
