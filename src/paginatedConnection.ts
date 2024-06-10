@@ -1,28 +1,17 @@
-export type EncodeCursorProps<TNode, TCursor = { after: string }> = {
-  node: TNode
-  getCursor: (node: TNode) => TCursor
-}
+import { EncodeCursor, TCursorBase, TCursorValueBase } from './cursor'
 
-type EncodeCursor<TNode, TCursor> = (
-  props: EncodeCursorProps<TNode, TCursor>
-) => string
-
-export type DataloaderArgs<TNode, TCursor = { after: string }> = {
+export type DataloaderProps<TNode, TCursor = { after: string }> = {
   cursor?: TCursor
   first: number
   encodeCursor: EncodeCursor<TNode, TCursor>
 }
 
-export type CountLoaderArgs<TCursor = { after: string }> = { cursor?: TCursor }
+export type CountLoaderProps<TCursor = { after: string }> = { cursor?: TCursor }
 
 export type PaginationInput = {
   after?: string
   first?: number
 }
-
-export type TCursorValueBase = { after: string }
-
-export type TCursorBase = TCursorValueBase & { [key: string]: string }
 
 export type PaginatedConnectionProps<
   TNode extends object,
@@ -30,13 +19,13 @@ export type PaginatedConnectionProps<
 > = {
   pagination: PaginationInput
   paginationSafeLimit: number
-  dataLoader: (props: DataloaderArgs<TNode, TCursor>) => Promise<{
+  dataLoader: (props: DataloaderProps<TNode, TCursor>) => Promise<{
     edges: { node: TNode; cursor: string }[]
     hasNextPage: boolean
   }>
   encodeCursor: EncodeCursor<TNode, TCursor>
   decodeCursor: (cursor: string) => TCursor
-  countLoader: (props: CountLoaderArgs<TCursor>) => Promise<number>
+  countLoader: (props: CountLoaderProps<TCursor>) => Promise<number>
 }
 
 /**

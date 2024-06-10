@@ -1,26 +1,25 @@
 import {
-  CountLoaderArgs,
-  DataloaderArgs,
-  EncodeCursorProps,
   TCursorBase,
   TCursorValueBase,
+  encodeCursor,
+  decodeCursor,
+} from './cursor'
+import {
+  CountLoaderProps,
+  DataloaderProps,
+  PaginationInput,
   getPaginationLimit,
   paginatedConnection,
 } from './paginatedConnection'
-
-type PaginationInput = {
-  after?: string
-  first?: number
-}
 
 export type MysqlPaginatedConnectionProps<
   TNode extends object,
   TCursor = { after: string },
 > = {
-  dataLoader: (props: DataloaderArgs<TNode, TCursor>) => Promise<{
+  dataLoader: (props: DataloaderProps<TNode, TCursor>) => Promise<{
     edges: { node: TNode; cursor: string }[]
   }>
-  countLoader: (props: CountLoaderArgs<TCursor>) => Promise<number>
+  countLoader: (props: CountLoaderProps<TCursor>) => Promise<number>
   pagination: PaginationInput
   paginationSafeLimit: number
 }
@@ -29,20 +28,20 @@ export const mysqlPaginatedConnection = async <
   TNode extends object,
   TCursor extends TCursorBase = TCursorValueBase,
 >(
-  params: MysqlPaginatedConnectionProps<TNode, TCursor>
+  props: MysqlPaginatedConnectionProps<TNode, TCursor>
 ) => {
   // Add +1 element for calculation of hasNextPage value
-  const paginationSafeLimit = params.paginationSafeLimit + 1
+  const paginationSafeLimit = props.paginationSafeLimit + 1
   const first = getPaginationLimit(
     // Add +1 element for calculation of hasNextPage value
     paginationSafeLimit,
-    params.pagination?.first
+    props.pagination?.first
   )
 
   const paginatedConnectionResult = await paginatedConnection<TNode, TCursor>({
-    ...params,
+    ...props,
     pagination: {
-      ...params.pagination,
+      ...props.pagination,
       // Add +1 element for calculation of hasNextPage value
       first: first + 1,
     },
@@ -52,7 +51,7 @@ export const mysqlPaginatedConnection = async <
     decodeCursor,
     dataLoader: async (dataloaderParams) => {
       // Execute dataloader loading with +1 element
-      const dataLoaderValue = await params.dataLoader(dataloaderParams)
+      const dataLoaderValue = await props.dataLoader(dataloaderParams)
       return {
         edges: dataLoaderValue.edges,
         hasNextPage: dataLoaderValue.edges.length > first,
@@ -70,32 +69,5 @@ export const mysqlPaginatedConnection = async <
       ...paginatedConnectionResult.pageInfo,
       endCursor: edges[edges.length - 1]?.cursor,
     },
-  }
-}
-
-export const encodeCursor = <TNode, TCursor extends TCursorBase>({
-  node,
-  getCursor,
-}: EncodeCursorProps<TNode, TCursor>) => {
-  const cursorContent = new URLSearchParams()
-
-  const cursorValues = getCursor(node)
-
-  for (const key in cursorValues) {
-    cursorContent.append(key, cursorValues[key])
-  }
-  return Buffer.from(cursorContent.toString()).toString('base64url')
-}
-
-export const decodeCursor = <TCursor = { after: string }>(cursor: string) => {
-  try {
-    const cursorParams = new URLSearchParams(
-      Buffer.from(cursor, 'base64url').toString()
-    ).entries()
-
-    return Object.fromEntries(cursorParams) as TCursor
-  } /* c8 ignore start: malformed cursors simply return first page */ catch (err) {
-    return {} as TCursor
-    /* c8 ignore end */
   }
 }

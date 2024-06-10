@@ -1,46 +1,47 @@
-import { mongoDbPaginatedConnection } from '../src/paginatedConnectionMongoDb'
-import { ObjectId, WithId } from 'mongodb'
+import { mysqlPaginatedConnection } from '../src/paginatedConnectionMysql'
+import { randomUUID } from 'crypto'
 
 import tap from 'tap'
 import { decodeCursor, encodeCursor } from '../src/cursor'
 
-export type MongoDbDoc = WithId<{
+export type MysqlDoc = {
+  id: string
   name: string
   premium: boolean
-}>
+}
 
 tap.test(
   'should return expected items when no pagination input provided',
   async (t) => {
     const dataLoaderItems = [
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name1',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name2',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name3',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name4',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name5',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
     ]
 
-    const data = await mongoDbPaginatedConnection<MongoDbDoc>({
+    const data = await mysqlPaginatedConnection<MysqlDoc>({
       pagination: {},
       paginationSafeLimit: 100,
       countLoader: async () => {
@@ -53,7 +54,7 @@ tap.test(
             cursor: props.encodeCursor({
               node: item,
               getCursor: () => ({
-                after: item._id.toHexString(),
+                after: item.id,
               }),
             }),
           })),
@@ -65,7 +66,7 @@ tap.test(
     t.same(
       decodeCursor(data.pageInfo.endCursor),
       {
-        after: dataLoaderItems[dataLoaderItems.length - 1]._id.toHexString(),
+        after: dataLoaderItems[dataLoaderItems.length - 1].id,
       },
       'should match endCursor content value'
     )
@@ -82,7 +83,7 @@ tap.test(
           cursor: encodeCursor({
             node: item,
             getCursor: () => ({
-              after: item._id.toHexString(),
+              after: item.id,
             }),
           }),
         }
@@ -97,33 +98,33 @@ tap.test(
   async (t) => {
     const dataLoaderItems = [
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name1',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name2',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name3',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name4',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name5',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
     ]
 
-    const data = await mongoDbPaginatedConnection<MongoDbDoc>({
+    const data = await mysqlPaginatedConnection<MysqlDoc>({
       pagination: { first: 2 },
       paginationSafeLimit: 100,
       countLoader: async () => {
@@ -135,7 +136,7 @@ tap.test(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getCursor: () => ({ after: item._id.toHexString() }),
+              getCursor: () => ({ after: item.id }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -146,7 +147,7 @@ tap.test(
     t.same(
       decodeCursor(data.pageInfo.endCursor),
       {
-        after: dataLoaderItems[1]._id.toHexString(),
+        after: dataLoaderItems[1].id,
       },
       'should match endCursor content value'
     )
@@ -162,7 +163,7 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getCursor: () => ({ after: item._id.toHexString() }),
+            getCursor: () => ({ after: item.id }),
           }),
         }
       }),
@@ -176,37 +177,37 @@ tap.test(
   async (t) => {
     const dataLoaderItems = [
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name1',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name2',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name3',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name4',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name5',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
     ]
 
-    const data = await mongoDbPaginatedConnection<MongoDbDoc>({
+    const data = await mysqlPaginatedConnection<MysqlDoc>({
       pagination: {
         after: encodeCursor({
           node: dataLoaderItems[1],
-          getCursor: () => ({ after: dataLoaderItems[1]._id.toHexString() }),
+          getCursor: () => ({ after: dataLoaderItems[1].id }),
         }),
       },
       paginationSafeLimit: 100,
@@ -219,7 +220,7 @@ tap.test(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getCursor: () => ({ after: item._id.toHexString() }),
+              getCursor: () => ({ after: item.id }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -230,7 +231,7 @@ tap.test(
     t.same(
       decodeCursor(data.pageInfo.endCursor),
       {
-        after: dataLoaderItems[dataLoaderItems.length - 1]._id.toHexString(),
+        after: dataLoaderItems[dataLoaderItems.length - 1].id,
       },
       'should match endCursor content value'
     )
@@ -246,7 +247,7 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getCursor: () => ({ after: item._id.toHexString() }),
+            getCursor: () => ({ after: item.id }),
           }),
         }
       }),
@@ -260,38 +261,38 @@ tap.test(
   async (t) => {
     const dataLoaderItems = [
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name1',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name2',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name3',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name4',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name5',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
     ]
 
-    const data = await mongoDbPaginatedConnection<MongoDbDoc>({
+    const data = await mysqlPaginatedConnection<MysqlDoc>({
       pagination: {
         first: 2,
         after: encodeCursor({
           node: dataLoaderItems[1],
-          getCursor: () => ({ after: dataLoaderItems[1]._id.toHexString() }),
+          getCursor: () => ({ after: dataLoaderItems[1].id }),
         }),
       },
       paginationSafeLimit: 100,
@@ -304,7 +305,7 @@ tap.test(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getCursor: () => ({ after: item._id.toHexString() }),
+              getCursor: () => ({ after: item.id }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -315,7 +316,7 @@ tap.test(
     t.same(
       decodeCursor(data.pageInfo.endCursor),
       {
-        after: dataLoaderItems[3]._id.toHexString(),
+        after: dataLoaderItems[3].id,
       },
       'should match endCursor content value'
     )
@@ -331,7 +332,7 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getCursor: () => ({ after: item._id.toHexString() }),
+            getCursor: () => ({ after: item.id }),
           }),
         }
       }),
@@ -345,33 +346,33 @@ tap.test(
   async (t) => {
     const dataLoaderItems = [
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name1',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name2',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name3',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name4',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name5',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
     ]
 
-    const data = await mongoDbPaginatedConnection<MongoDbDoc>({
+    const data = await mysqlPaginatedConnection<MysqlDoc>({
       pagination: {
         first: 500,
       },
@@ -385,7 +386,7 @@ tap.test(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getCursor: () => ({ after: item._id.toHexString() }),
+              getCursor: () => ({ after: item.id }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -396,7 +397,7 @@ tap.test(
     t.same(
       decodeCursor(data.pageInfo.endCursor),
       {
-        after: dataLoaderItems[dataLoaderItems.length - 1]._id.toHexString(),
+        after: dataLoaderItems[dataLoaderItems.length - 1].id,
       },
       'should match endCursor content value'
     )
@@ -412,7 +413,7 @@ tap.test(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getCursor: () => ({ after: item._id.toHexString() }),
+            getCursor: () => ({ after: item.id }),
           }),
         }
       }),
@@ -426,33 +427,33 @@ tap.only(
   async (t) => {
     const dataLoaderItems = [
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name1',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name2',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name3',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name4',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
       {
-        _id: new ObjectId(),
+        id: randomUUID(),
         name: 'name5',
         premium: true,
-      } as MongoDbDoc,
+      } as MysqlDoc,
     ]
 
-    const data = await mongoDbPaginatedConnection<MongoDbDoc>({
+    const data = await mysqlPaginatedConnection<MysqlDoc>({
       pagination: {
         after: 'foobar',
       },
@@ -466,7 +467,7 @@ tap.only(
             node: item,
             cursor: props.encodeCursor({
               node: item,
-              getCursor: () => ({ after: item._id.toHexString() }),
+              getCursor: () => ({ after: item.id }),
             }),
           })),
           hasNextPage: dataLoaderItems.length > props.first,
@@ -477,7 +478,7 @@ tap.only(
     t.same(
       decodeCursor(data.pageInfo.endCursor),
       {
-        after: dataLoaderItems[dataLoaderItems.length - 1]._id.toHexString(),
+        after: dataLoaderItems[dataLoaderItems.length - 1].id,
       },
       'should match endCursor content value'
     )
@@ -493,7 +494,7 @@ tap.only(
           node: item,
           cursor: encodeCursor({
             node: item,
-            getCursor: () => ({ after: item._id.toHexString() }),
+            getCursor: () => ({ after: item.id }),
           }),
         }
       }),
