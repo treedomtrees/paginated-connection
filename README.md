@@ -55,6 +55,17 @@ type Node = {
   id: string;
 };
 
+// Define encode and decode functions
+
+// Function to get cursor object from node
+const getCursor = node => ({ after: node.id });
+
+// encodeCursor should return a string
+const encodeCursor = ({ node, getCursor }) => Buffer.from(JSON.stringify(getCursor())).toString('base64');
+
+// decodeCursor should return an object 
+const decodeCursor = cursor => JSON.parse(Buffer.from(cursor, 'base64url').toString())
+
 // Sample data loader
 const dataLoader = async ({ cursor, first, encodeCursor }) => {
   // Fetch data based on cursor and first
@@ -69,18 +80,6 @@ const dataLoader = async ({ cursor, first, encodeCursor }) => {
 const countLoader = async ({ cursor }) => {
   return countDataFromDataSource(cursor);
 };
-
-// Define encode and decode functions
-
-// Function to get cursor object from node
-const getCursor = node => ({ after: node.id });
-
-// encodeCursor should return a string
-const encodeCursor = ({ node, getCursor }) => Buffer.from(JSON.stringify(getCursor())).toString('base64');
-
-// decodeCursor should return an object 
-const decodeCursor = cursor => JSON.parse(Buffer.from(cursor, 'base64url').toString())
-
 
 const paginationInput: PaginationInput = { after: 'cursor123', first: 10 };
 const paginationSafeLimit = 50;
