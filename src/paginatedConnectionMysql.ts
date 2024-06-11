@@ -7,6 +7,7 @@ import {
 import {
   CountLoaderProps,
   DataloaderProps,
+  PaginatedConnectionReturnType,
   PaginationInput,
   getPaginationLimit,
   paginatedConnection,
@@ -29,7 +30,7 @@ export const mysqlPaginatedConnection = async <
   TCursor extends TCursorBase = TCursorValueBase,
 >(
   props: MysqlPaginatedConnectionProps<TNode, TCursor>
-) => {
+): PaginatedConnectionReturnType<TNode> => {
   // Add +1 element for calculation of hasNextPage value
   const paginationSafeLimit = props.paginationSafeLimit + 1
   const first = getPaginationLimit(
