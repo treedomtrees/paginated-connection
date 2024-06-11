@@ -1,6 +1,19 @@
+
+<h2 align="center">
+Paginated Connection
+</h2>
+
+<h4 align="center">
+Made with ❤️ at <a href="https://treedom.net"><img src="https://i.ibb.co/QfYVtP5/Treedom-logo.png" height="24" alt="treedom" border="0" /></a>
+</h4>
+
+<h6 align="center">
+<a href="https://www.treedom.net/it/organization/treedom/event/treedom-open-source"><img src="https://badges.treedom.net/badge/f/treedom-open-source" alt="plant-a-tree" border="0" /></a>
+</h6>
+
 # Paginated Connection
 
-Paginated Connection is a utility library for handling pagination in your applications. It simplifies the process of managing paginated data, making it easy to integrate into your projects.
+Paginated Connection is a utility library for handling pagination in your applications. It simplifies the process of managing paginated data, making it easy to integrate into your projects. It has built for GraphQL, and it's fully complaint with [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm) 
 
 ## Table of Contents
 
@@ -29,9 +42,10 @@ Pagination is essential for managing large datasets in a user-friendly manner. P
 ## Features
 
 - Easy to set up and use
+- Highly customizable
+- Fully complaint with [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm) 
 - Supports various pagination strategies
 - Works seamlessly with different data sources
-- Highly customizable
 
 ## Installation
 
