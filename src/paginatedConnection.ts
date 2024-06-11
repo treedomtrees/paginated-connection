@@ -1,5 +1,17 @@
 import { EncodeCursor, TCursorBase, TCursorValueBase } from './cursor'
 
+export type PaginatedConnectionReturnType<TNode> = Promise<{
+  totalCount: () => Promise<number>
+  pageInfo: {
+    endCursor: string
+    hasNextPage: boolean
+  }
+  edges: Array<{
+    node: TNode
+    cursor: string
+  }>
+}>
+
 export type DataloaderProps<TNode, TCursor = { after: string }> = {
   cursor?: TCursor
   first: number
@@ -36,7 +48,7 @@ export const paginatedConnection = async <
   TCursor extends TCursorBase = TCursorValueBase,
 >(
   props: PaginatedConnectionProps<TNode, TCursor>
-) => {
+): PaginatedConnectionReturnType<TNode> => {
   const { first, after } = props.pagination ?? {}
 
   // Apply the safe limit or default when "first" is not provided

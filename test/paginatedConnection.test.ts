@@ -112,7 +112,7 @@ tap.test('should dataloader handler get cursor data', async (t) => {
     } as MysqlDoc,
   ]
 
-  const data = await paginatedConnection<MysqlDoc>({
+  await paginatedConnection<MysqlDoc>({
     pagination: {
       after: encodeCursor({
         node: dataLoaderItems[0],
