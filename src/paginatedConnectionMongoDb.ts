@@ -31,23 +31,20 @@ export const mongoDbPaginatedConnection = async <
 >(
   props: MongoDbPaginatedConnectionProps<TNode, TCursor>
 ): PaginatedConnectionReturnType<TNode> => {
-  // Add +1 element for calculation of hasNextPage value
-  const paginationSafeLimit = props.paginationSafeLimit + 1
   const first = getPaginationLimit(
-    // Add +1 element for calculation of hasNextPage value
-    paginationSafeLimit,
+    props.paginationSafeLimit,
     props.pagination?.first
   )
 
   const paginatedConnectionResult = await paginatedConnection<TNode, TCursor>({
     ...props,
+    // Add +1 element for calculation of hasNextPage value
+    paginationSafeLimit: props.paginationSafeLimit + 1,
     pagination: {
       ...props.pagination,
       // Add +1 element for calculation of hasNextPage value
       first: first + 1,
     },
-
-    paginationSafeLimit,
     encodeCursor,
     decodeCursor,
     dataLoader: async (dataloaderParams) => {
