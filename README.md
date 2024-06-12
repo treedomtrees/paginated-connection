@@ -1,19 +1,11 @@
+# Paginated Connection
 
-<h2 align="center">
-Paginated Connection
-</h2>
-
-<h4 align="center">
-Made with ❤️ at <a href="https://treedom.net"><img src="https://i.ibb.co/QfYVtP5/Treedom-logo.png" height="24" alt="treedom" border="0" /></a>
-</h4>
-
-<h6 align="center">
 <a href="https://www.treedom.net/it/organization/treedom/event/treedom-open-source"><img src="https://badges.treedom.net/badge/f/treedom-open-source" alt="plant-a-tree" border="0" /></a>
 </h6>
 
-# Paginated Connection
+Paginated Connection is a utility library for handling pagination in your applications. It simplifies the process of managing paginated data, making it easy to integrate into your projects. It has built for GraphQL, and it's fully compliant with [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm) 
 
-Paginated Connection is a utility library for handling pagination in your applications. It simplifies the process of managing paginated data, making it easy to integrate into your projects. It has built for GraphQL, and it's fully complaint with [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm) 
+__Made with ❤️ at&nbsp;&nbsp;[<img src="https://i.ibb.co/QfYVtP5/Treedom-logo.png" height="24" alt="Treedom" border="0" align="top" />](#-join-us-in-making-a-difference-)__, [join us in making a difference](#-join-us-in-making-a-difference-)! 
 
 ## Table of Contents
 
@@ -344,6 +336,15 @@ Handles pagination for MongoDB databases, extending the basic paginatedConnectio
     - `paginationSafeLimit` (`number`): Safe limit for pagination.
 
 In the MongoDB implementation, the `+1` handling of data for the calculation of the `hasNextPage` value is implicitly managed by the function execution. This means you don't need to handle it yourself. The `hasNextPage` value is automatically calculated, so you should not return this value in your data loader.
+
+
+## 🌳 Join Us in Making a Difference! 🌳
+
+We invite all developers who use Treedom's open-source code to support our mission of sustainability by planting a tree with us. By contributing to reforestation efforts, you help create a healthier planet and give back to the environment. Visit our [Treedom Open Source Forest](https://www.treedom.net/en/organization/treedom/event/treedom-open-source) to plant your tree today and join our community of eco-conscious developers.
+
+Additionally, you can integrate the Treedom GitHub badge into your repository to showcase the number of trees in your Treedom forest and encourage others to plant new ones. Check out our [integration guide](https://github.com/treedomtrees/.github/blob/main/profile/README.md) to get started.
+
+Together, we can make a lasting impact! 🌍💚
 
 ## Contributing
 
