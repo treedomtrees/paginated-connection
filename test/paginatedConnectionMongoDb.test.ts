@@ -583,3 +583,80 @@ tap.test(
     )
   }
 )
+
+tap.test(
+  'should return expected items using createEdge function',
+  async (t) => {
+    const dataLoaderItems = [
+      {
+        _id: new ObjectId(),
+        name: 'name1',
+        premium: true,
+      } as MongoDbDoc,
+      {
+        _id: new ObjectId(),
+        name: 'name2',
+        premium: true,
+      } as MongoDbDoc,
+      {
+        _id: new ObjectId(),
+        name: 'name3',
+        premium: true,
+      } as MongoDbDoc,
+      {
+        _id: new ObjectId(),
+        name: 'name4',
+        premium: true,
+      } as MongoDbDoc,
+      {
+        _id: new ObjectId(),
+        name: 'name5',
+        premium: true,
+      } as MongoDbDoc,
+    ]
+
+    const data = await mongoDbPaginatedConnection<MongoDbDoc>({
+      pagination: { first: 2 },
+      paginationSafeLimit: 100,
+      countLoader: async () => {
+        return 5
+      },
+      dataLoader: async (props) => {
+        return {
+          edges: dataLoaderItems
+            .slice(0, props.first)
+            .map((item) =>
+              props.createEdge(item, () => ({ after: item._id.toHexString() }))
+            ),
+          hasNextPage: dataLoaderItems.length > props.first,
+        }
+      },
+    })
+
+    t.same(
+      decodeCursor(data.pageInfo.endCursor),
+      {
+        after: dataLoaderItems[1]._id.toHexString(),
+      },
+      'should match endCursor content value'
+    )
+
+    t.equal(await data.totalCount(), 5, 'should match totalCount value')
+
+    t.equal(data.pageInfo.hasNextPage, true, 'should match hasNextPage value')
+
+    t.same(
+      data.edges,
+      dataLoaderItems.slice(0, 2).map((item) => {
+        return {
+          node: item,
+          cursor: encodeCursor({
+            node: item,
+            getCursor: () => ({ after: item._id.toHexString() }),
+          }),
+        }
+      }),
+      {}
+    )
+  }
+)

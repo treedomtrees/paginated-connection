@@ -1,21 +1,29 @@
 import { EncodeCursor, TCursorBase, TCursorValueBase } from './cursor'
 
+export type PaginatedConnectionEdge<TNode> = {
+  node: TNode
+  cursor: string
+}
+
 export type PaginatedConnectionReturnType<TNode> = Promise<{
   totalCount: () => Promise<number>
   pageInfo: {
     endCursor: string
     hasNextPage: boolean
   }
-  edges: Array<{
-    node: TNode
-    cursor: string
-  }>
+  edges: Array<PaginatedConnectionEdge<TNode>>
 }>
+
+export type CreateEdge<TNode, TCursor> = (
+  node: TNode,
+  getCursor: (node: TNode) => TCursor
+) => PaginatedConnectionEdge<TNode>
 
 export type DataloaderProps<TNode, TCursor = { after: string }> = {
   cursor?: TCursor
   first: number
   encodeCursor: EncodeCursor<TNode, TCursor>
+  createEdge: CreateEdge<TNode, TCursor>
 }
 
 export type CountLoaderProps<TCursor = { after: string }> = { cursor?: TCursor }
@@ -64,6 +72,15 @@ export const paginatedConnection = async <
     cursor: decodedCursor,
     encodeCursor: props.encodeCursor,
     first: limit,
+    createEdge: (node, getCursor) => {
+      return {
+        node,
+        cursor: props.encodeCursor({
+          node,
+          getCursor,
+        }),
+      }
+    },
   })
 
   return {
