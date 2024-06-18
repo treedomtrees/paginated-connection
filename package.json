@@ -13,6 +13,10 @@
     "lint": "eslint src test --cache",
     "build": "rm -rf ./lib && tsc"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/treedomtrees/paginated-connection"
+  },
   "author": "Davide Arena <d.arena@treedom.net>",
   "license": "MIT",
   "devDependencies": {
