@@ -137,7 +137,7 @@ tap.test('should dataloader handler get cursor data', async (t) => {
 
       return {
         edges: dataLoaderItems.slice(1, props.first).map((item) => {
-          return props.createEdge(item, () => ({
+          return props.getEdge(item, () => ({
             after: item.id,
           }))
         }),
@@ -147,7 +147,7 @@ tap.test('should dataloader handler get cursor data', async (t) => {
   })
 })
 
-tap.test('should dataloader handler get createEdge function', async (t) => {
+tap.test('should dataloader handler get getEdge function', async (t) => {
   const dataLoaderItems = [
     {
       id: randomUUID(),
@@ -201,10 +201,75 @@ tap.test('should dataloader handler get createEdge function', async (t) => {
 
       return {
         edges: dataLoaderItems.slice(1, props.first).map((item) => {
-          return props.createEdge(item, () => ({
-            after: item.id,
+          return props.getEdge(item, (node) => ({
+            after: node.id,
           }))
         }),
+        hasNextPage: dataLoaderItems.length > props.first,
+      }
+    },
+  })
+})
+
+tap.test('should dataloader handler get getEdges function', async (t) => {
+  const dataLoaderItems = [
+    {
+      id: randomUUID(),
+      name: 'name1',
+      premium: true,
+    } as Doc,
+    {
+      id: randomUUID(),
+      name: 'name2',
+      premium: true,
+    } as Doc,
+    {
+      id: randomUUID(),
+      name: 'name3',
+      premium: true,
+    } as Doc,
+    {
+      id: randomUUID(),
+      name: 'name4',
+      premium: true,
+    } as Doc,
+    {
+      id: randomUUID(),
+      name: 'name5',
+      premium: true,
+    } as Doc,
+  ]
+
+  await paginatedConnection<Doc>({
+    pagination: {
+      after: encodeCursor({
+        node: dataLoaderItems[0],
+        getCursor: () => ({
+          after: dataLoaderItems[0].id,
+        }),
+      }),
+      first: 1,
+    },
+    paginationSafeLimit: 100,
+    decodeCursor: () => ({ after: dataLoaderItems[0].id }),
+    encodeCursor: (cursor) => JSON.stringify(cursor),
+    countLoader: async () => {
+      return 5
+    },
+    dataLoader: async (props) => {
+      t.same(
+        props.cursor,
+        { after: dataLoaderItems[0].id },
+        'should match after value'
+      )
+
+      return {
+        edges: props.getEdges(
+          dataLoaderItems.slice(1, props.first),
+          (node) => ({
+            after: node.id,
+          })
+        ),
         hasNextPage: dataLoaderItems.length > props.first,
       }
     },
