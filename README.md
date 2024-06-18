@@ -46,7 +46,7 @@ Pagination is essential for managing large datasets in a user-friendly manner. P
 
 ## Installation
 
-To install Paginated Connection::
+To install Paginated Connection:
 
 ```sh
 npm install paginated-connection
