@@ -54,7 +54,7 @@ npm install paginated-connection
 Here is a basic example to get you started with Paginated Connection:
 
 ```typescript
-import { paginatedConnection, PaginationInput } from 'paginated-connection';
+const { paginatedConnection, PaginationInput } = require('@treedom/paginated-connection')
 
 // Define a simple node type
 type Node = {
@@ -108,7 +108,7 @@ console.log(result);
 Using Paginated Connection with MySQL:
 
 ```typescript
-import { mysqlPaginatedConnection } from 'paginated-connection';
+import { mysqlPaginatedConnection } from '@treedom/paginated-connection';
 
 // Define a simple node type
 type Node = {
@@ -154,7 +154,7 @@ In the MySQL implementation, the `+1` handling of data for the calculation of th
 Using Paginated Connection with MongoDB:
 
 ```typescript
-import { mongoDbPaginatedConnection } from 'paginated-connection';
+import { mongoDbPaginatedConnection } from '@treedom/paginated-connection';
 
 // Define a simple node type
 type Node = {
@@ -257,7 +257,7 @@ type CustomCursor = { after: string; sortField: string; sortOrder: 'asc' | 'desc
 When using a custom cursor type, you need to type the `paginatedConnection` (or `mysqlPaginatedConnection`, `mongoDbPaginatedConnection`, ecc...), providing cursor custom type:
 
 ```typescript
-import { paginatedConnection } from 'paginated-connection';
+import { paginatedConnection } from '@treedom/paginated-connection';
 
 type Node = {
   id: string;
