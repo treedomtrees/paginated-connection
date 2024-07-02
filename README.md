@@ -54,7 +54,7 @@ npm install @treedom/paginated-connection
 Here is a basic example to get you started with Paginated Connection:
 
 ```typescript
-const { paginatedConnection, PaginationInput } = require('@treedom/paginated-connection')
+import { paginatedConnection, PaginationInput } from '@treedom/paginated-connection'
 
 // Define a simple node type
 type Node = {
