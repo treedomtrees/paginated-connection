@@ -123,8 +123,7 @@ const mysqlDataLoader = async ({ cursor, first, encodeCursor }) => {
   // Fetch data from MySQL database
   const edges = fetchDataFromMySQL(cursor, first);
   return {
-    edges: edges.map(node => ({ node, cursor: encodeCursor({ node, getCursor }) })),
-    hasNextPage: checkIfHasNextPageInMySQL(),
+    edges: edges.map(node => ({ node, cursor: encodeCursor({ node, getCursor }) }))
   };
 };
 
