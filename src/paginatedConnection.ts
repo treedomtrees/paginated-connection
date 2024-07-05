@@ -1,21 +1,35 @@
 import { EncodeCursor, TCursorBase, TCursorValueBase } from './cursor'
 
+export type PaginatedConnectionEdge<TNode> = {
+  node: TNode
+  cursor: string
+}
+
 export type PaginatedConnectionReturnType<TNode> = Promise<{
   totalCount: () => Promise<number>
   pageInfo: {
     endCursor: string
     hasNextPage: boolean
   }
-  edges: Array<{
-    node: TNode
-    cursor: string
-  }>
+  edges: Array<PaginatedConnectionEdge<TNode>>
 }>
+
+export type GetEdge<TNode, TCursor> = (
+  node: TNode,
+  getCursor: (node: TNode) => TCursor
+) => PaginatedConnectionEdge<TNode>
+
+export type GetEdges<TNode, TCursor> = (
+  nodes: Array<TNode>,
+  getCursor: (node: TNode) => TCursor
+) => Array<PaginatedConnectionEdge<TNode>>
 
 export type DataloaderProps<TNode, TCursor = { after: string }> = {
   cursor?: TCursor
   first: number
   encodeCursor: EncodeCursor<TNode, TCursor>
+  getEdge: GetEdge<TNode, TCursor>
+  getEdges: GetEdges<TNode, TCursor>
 }
 
 export type CountLoaderProps<TCursor = { after: string }> = { cursor?: TCursor }
@@ -60,10 +74,23 @@ export const paginatedConnection = async <
     decodedCursor = props.decodeCursor(after)
   }
 
+  const getEdge = (node: TNode, getCursor: (node: TNode) => TCursor) => {
+    return {
+      node,
+      cursor: props.encodeCursor({
+        node,
+        getCursor,
+      }),
+    }
+  }
+
   const { edges, hasNextPage } = await props.dataLoader({
     cursor: decodedCursor,
     encodeCursor: props.encodeCursor,
     first: limit,
+    getEdge,
+    getEdges: (nodes, getCursor) =>
+      nodes.map((node) => getEdge(node, getCursor)),
   })
 
   return {

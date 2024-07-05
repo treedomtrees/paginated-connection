@@ -1,11 +1,10 @@
 # Paginated Connection
 
 <a href="https://www.treedom.net/it/organization/treedom/event/treedom-open-source"><img src="https://badges.treedom.net/badge/f/treedom-open-source" alt="plant-a-tree" border="0" /></a>
-</h6>
 
 Paginated Connection is a utility library for handling pagination in your applications. It simplifies the process of managing paginated data, making it easy to integrate into your projects. It has built for GraphQL, and it's fully compliant with [GraphQL Cursor Connections Specification](https://relay.dev/graphql/connections.htm) 
 
-__Made with ❤️ at&nbsp;&nbsp;[<img src="https://i.ibb.co/QfYVtP5/Treedom-logo.png" height="24" alt="Treedom" border="0" align="top" />](#-join-us-in-making-a-difference-)__, [join us in making a difference](#-join-us-in-making-a-difference-)! 
+__Made with ❤️ at&nbsp;&nbsp;[<img src="https://assets.treedom.net/image/upload/manual_uploads/treedom-logo-contrib_gjrzt6.png" height="24" alt="Treedom" border="0" align="top" />](#-join-us-in-making-a-difference-)__, [join us in making a difference](#-join-us-in-making-a-difference-)! 
 
 ## Table of Contents
 
@@ -17,9 +16,15 @@ __Made with ❤️ at&nbsp;&nbsp;[<img src="https://i.ibb.co/QfYVtP5/Treedom-log
   - [MySQL Example](#mysql-example)
   - [MongoDB Example](#mongodb-example)
   - [Return value](#return-value)
+- [Edges](#edges)
+  - [Compose using getEdge](#compose-using-createedge)
+  - [Compose using getEdges](#compose-using-createedges)
+  - [Compose manually](#compose-manually)
+  - [Manually compose Edges](#manually-compose-edges)
 - [Cursor Types](#cursor-types)
   - [Default Cursor Type](#default-cursor-type)
   - [Custom Cursor Type](#custom-cursor-type)
+
 - [API Reference](#api-reference)
   - [paginatedConnection](#paginatedconnection)
   - [mysqlPaginatedConnection](#mysqlpaginatedconnection)
@@ -73,11 +78,11 @@ const encodeCursor = ({ node, getCursor }) => Buffer.from(JSON.stringify(getCurs
 const decodeCursor = cursor => JSON.parse(Buffer.from(cursor, 'base64url').toString())
 
 // Sample data loader
-const dataLoader = async ({ cursor, first, encodeCursor }) => {
+const dataLoader = async ({ cursor, first, encodeCursor, getEdge }) => {
   // Fetch data based on cursor and first
   const edges = fetchDataFromDataSource(cursor, first);
   return {
-    edges: edges.map(node => ({ node, cursor: encodeCursor({ node, getCursor }) })),
+    edges: edges.map(node => getEdge(node, getCursor)),
     hasNextPage: checkIfHasNextPage(),
   };
 };
@@ -123,7 +128,7 @@ const mysqlDataLoader = async ({ cursor, first, encodeCursor }) => {
   // Fetch data from MySQL database
   const edges = fetchDataFromMySQL(cursor, first);
   return {
-    edges: edges.map(node => ({ node, cursor: encodeCursor({ node, getCursor }) }))
+    edges: edges.map(node => getEdge(node, getCursor)),
   };
 };
 
@@ -168,7 +173,7 @@ const mongoDbDataLoader = async ({ cursor, first, encodeCursor }) => {
   // Fetch data from MongoDB
   const edges = fetchDataFromMongoDB(cursor, first);
   return {
-    edges: edges.map(node => ({ node, cursor: encodeCursor({ node, getCursor }) })),
+    edges: edges.map(node => getEdge(node, getCursor)),
     hasNextPage: checkIfHasNextPageInMongoDB(),
   };
 };
@@ -213,6 +218,65 @@ export type PaginatedConnectionReturnType<TNode> = Promise<{
 ```
 
 where `TNode` is the type of the `node` loaded by `dataLoader` function.
+
+## Edges
+
+### Compose using getEdge
+
+When executing `dataloader` function, it provides `getEdge` function, which is a shortcut to return an `Edge` object. Object returned by `getEdge` will contain both `node` and `cursor` values.
+
+This function is very useful to avoid write boilerplate code to compose the `Edge` object, specially for cursor. Under the hood, it executes the `encodeCursor` function, providing cursor inside of return object `Edge`.
+
+```typescript
+const dataLoader = async ({ cursor, first, encodeCursor }) => {
+  const nodes = fetchDataFromDataSource(cursor, first);
+  return {
+    edges: nodes.map(node => getEdge(node, getCursor)),
+    hasNextPage: checkIfHasNextPage(),
+  };
+};
+```
+
+Function `getEdge` gets in input:
+ - `node` object, which should has `TNode` type;
+ - `getCursor` function, which should returns an object of type `TCursor`.
+
+
+### Compose using getEdges
+
+When executing `dataloader` function, it provides `getEdges` function, which is a shortcut to return an `Edges` array. Every item returned by getEdges will contain both `node` and `cursor` values.
+
+This function is very useful when you have an array of loaded items, which every item is already typed as `TNode` and ready to be used as a node inside `Edge`.
+
+```typescript
+const dataLoader = async ({ cursor, first, encodeCursor }) => {
+  const nodes = fetchDataFromDataSource(cursor, first); // nodes is an array of TNode object
+  return {
+    edges: getEdges(nodes, getCursor),
+    hasNextPage: checkIfHasNextPage(),
+  };
+};
+```
+
+Function `getEdges` gets in input:
+ - `nodes` array, which should has `Array<TNode>` type;
+ - `getCursor` function, which should returns an object of type `TCursor`.
+
+Under the hood, it executes the `encodeCursor` function, in order to provide the cursor inside of `Edge`.
+
+
+### Compose manually
+If you need more customization of data, `Edges` could be manually composed, returning an array of `Edge`.
+
+```typescript
+const dataLoader = async ({ cursor, first, encodeCursor }) => {
+  const edges = fetchDataFromDataSource(cursor, first);
+  return {
+    edges: edges.map(node => ({ node, cursor: encodeCursor({ node, getCursor }) })),
+    hasNextPage: checkIfHasNextPage(),
+  };
+};
+```
 
 ## Cursor Types
 
@@ -277,7 +341,7 @@ const getCursor = (node): CustomCursor => ({
 const dataLoader = async ({ cursor, first, encodeCursor }) => {
   const edges = fetchDataFromDataSource(cursor, first);
   return {
-    edges: edges.map(node => ({ node, cursor: encodeCursor({ node, getCursor }) })),
+    edges: edges.map(node => getEdge(node, getCursor)),
     hasNextPage: checkIfHasNextPage(),
   };
 };
@@ -291,7 +355,6 @@ const result = await paginatedConnection<Node, CustomCursor>({
 
 console.log(result);
 ```
-
 ## API Reference
 
 ### paginatedConnection
