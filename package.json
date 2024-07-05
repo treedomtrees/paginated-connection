@@ -1,6 +1,6 @@
 {
   "name": "@treedom/paginated-connection",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Paginated connection utility library",
   "main": "./lib/index.js",
   "files": [
@@ -12,6 +12,10 @@
     "test": "tap 'test/**/*.test.ts' -- --ts",
     "lint": "eslint src test --cache",
     "build": "rm -rf ./lib && tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/treedomtrees/paginated-connection"
   },
   "author": "Davide Arena <d.arena@treedom.net>",
   "license": "MIT",

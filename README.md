@@ -49,7 +49,7 @@ Pagination is essential for managing large datasets in a user-friendly manner. P
 To install Paginated Connection:
 
 ```sh
-npm install paginated-connection
+npm install @treedom/paginated-connection
 ```
 
 ## Usage
@@ -59,7 +59,7 @@ npm install paginated-connection
 Here is a basic example to get you started with Paginated Connection:
 
 ```typescript
-import { paginatedConnection, PaginationInput } from 'paginated-connection';
+import { paginatedConnection, PaginationInput } from '@treedom/paginated-connection'
 
 // Define a simple node type
 type Node = {
@@ -113,7 +113,7 @@ console.log(result);
 Using Paginated Connection with MySQL:
 
 ```typescript
-import { mysqlPaginatedConnection } from 'paginated-connection';
+import { mysqlPaginatedConnection } from '@treedom/paginated-connection';
 
 // Define a simple node type
 type Node = {
@@ -129,7 +129,6 @@ const mysqlDataLoader = async ({ cursor, first, encodeCursor }) => {
   const edges = fetchDataFromMySQL(cursor, first);
   return {
     edges: edges.map(node => getEdge(node, getCursor)),
-    hasNextPage: checkIfHasNextPageInMySQL(),
   };
 };
 
@@ -159,7 +158,7 @@ In the MySQL implementation, the `+1` handling of data for the calculation of th
 Using Paginated Connection with MongoDB:
 
 ```typescript
-import { mongoDbPaginatedConnection } from 'paginated-connection';
+import { mongoDbPaginatedConnection } from '@treedom/paginated-connection';
 
 // Define a simple node type
 type Node = {
@@ -321,7 +320,7 @@ type CustomCursor = { after: string; sortField: string; sortOrder: 'asc' | 'desc
 When using a custom cursor type, you need to type the `paginatedConnection` (or `mysqlPaginatedConnection`, `mongoDbPaginatedConnection`, ecc...), providing cursor custom type:
 
 ```typescript
-import { paginatedConnection } from 'paginated-connection';
+import { paginatedConnection } from '@treedom/paginated-connection';
 
 type Node = {
   id: string;
