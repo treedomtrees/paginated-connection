@@ -173,8 +173,7 @@ const mongoDbDataLoader = async ({ cursor, first, encodeCursor }) => {
   // Fetch data from MongoDB
   const edges = fetchDataFromMongoDB(cursor, first);
   return {
-    edges: edges.map(node => getEdge(node, getCursor)),
-    hasNextPage: checkIfHasNextPageInMongoDB(),
+    edges: edges.map(node => getEdge(node, getCursor))
   };
 };
 
