@@ -43,7 +43,7 @@ export type PaginatedConnectionProps<
   TNode extends object,
   TCursor extends TCursorBase = TCursorValueBase,
 > = {
-  pagination: PaginationInput
+  pagination?: PaginationInput
   paginationSafeLimit: number
   dataLoader: (props: DataloaderProps<TNode, TCursor>) => Promise<{
     edges: { node: TNode; cursor: string }[]
