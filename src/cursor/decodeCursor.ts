@@ -9,10 +9,10 @@ export const decodeCursor = <TCursor = TCursorValueBase>(cursor: string) => {
     const parsedCursor: Record<string, CursorValueType> = {}
 
     for (const serializedCursorValue of [...cursorParams]) {
-      // Parse cursor value and attach to parse cursor object
+      // Parse cursor value and attach to parsed cursor object
       parsedCursor[serializedCursorValue[0]] = JSON.parse(
         serializedCursorValue[1]
-      ) // Deserialized value is CursorValueType. We use JSON.parse because could parse all handled primitive types
+      ) // Deserialized value is CursorValueType. We use JSON.parse because could parse all handled types (string, number and boolean)
     }
 
     return parsedCursor as TCursor
