@@ -15,7 +15,7 @@ import {
 
 export type MongoDbPaginatedConnectionProps<
   TNode extends object,
-  TCursor = { after: string },
+  TCursor = TCursorValueBase,
 > = {
   dataLoader: (props: DataloaderProps<TNode, TCursor>) => Promise<{
     edges: { node: TNode; cursor: string }[]
