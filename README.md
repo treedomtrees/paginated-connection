@@ -309,10 +309,13 @@ const result = await paginatedConnection<Node>({
 
 
 ### Custom Cursor Type
-For more complex scenarios, you can customize the cursor type to include additional fields, such as sorting information. The value of all cursor fields must be `string`.
+For more complex scenarios, you can customize the cursor type to include additional fields, such as sorting information. The value of all cursor fields must be one of the following:
+-  `string`
+-  `number`
+-  `boolean`
 
 ```typescript
-type CustomCursor = { after: string; sortField: string; sortOrder: 'asc' | 'desc' };
+type CustomCursor = { after: string; sortField: string; sortOrder: 'asc' | 'desc', ranking: number, includeMetadata: boolean };
 ```
 
 When using a custom cursor type, you need to type the `paginatedConnection` (or `mysqlPaginatedConnection`, `mongoDbPaginatedConnection`, ecc...), providing cursor custom type:
