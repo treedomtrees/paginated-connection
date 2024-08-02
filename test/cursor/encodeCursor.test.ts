@@ -11,7 +11,7 @@ tap.test('should return expected value with default cursor type', async (t) => {
         }
       },
     }),
-    'YWZ0ZXI9MQ'
+    'YWZ0ZXI9JTIyMSUyMg'
   )
 })
 
@@ -29,7 +29,7 @@ tap.test('should return expected value with custom cursor type', async (t) => {
         }
       },
     }),
-    'YWZ0ZXI9MSZzb3J0aW5nPTI'
+    'YWZ0ZXI9JTIyMSUyMiZzb3J0aW5nPSUyMjIlMjI'
   )
 })
 
@@ -54,7 +54,49 @@ tap.test(
           }
         },
       }),
-      'YWZ0ZXI9MSZzb3J0aW5nPTIy'
+      'YWZ0ZXI9JTIyMSUyMiZzb3J0aW5nPSUyMjIyJTIy'
+    )
+  }
+)
+
+tap.test(
+  'should return expected value with custom cursor with number field',
+  async (t) => {
+    t.equal(
+      encodeCursor<
+        { id: string; name: string },
+        { after: string; ranking: number }
+      >({
+        node: { id: '1', name: 'foobar' },
+        getCursor: () => {
+          return {
+            after: '1',
+            ranking: 1111,
+          }
+        },
+      }),
+      'YWZ0ZXI9JTIyMSUyMiZyYW5raW5nPTExMTE'
+    )
+  }
+)
+
+tap.test(
+  'should return expected value with custom cursor with boolean field',
+  async (t) => {
+    t.equal(
+      encodeCursor<
+        { id: string; name: string },
+        { after: string; enabled: boolean }
+      >({
+        node: { id: '1', name: 'foobar' },
+        getCursor: () => {
+          return {
+            after: '1',
+            enabled: true,
+          }
+        },
+      }),
+      'YWZ0ZXI9JTIyMSUyMiZlbmFibGVkPXRydWU'
     )
   }
 )
