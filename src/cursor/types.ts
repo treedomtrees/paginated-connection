@@ -1,4 +1,6 @@
-export type EncodeCursorProps<TNode, TCursor = { after: string }> = {
+export type CursorValueType = string | number | boolean
+
+export type EncodeCursorProps<TNode, TCursor = { after: CursorValueType }> = {
   node: TNode
   getCursor: (node: TNode) => TCursor
 }
@@ -7,6 +9,6 @@ export type EncodeCursor<TNode, TCursor> = (
   props: EncodeCursorProps<TNode, TCursor>
 ) => string
 
-export type TCursorValueBase = { after: string }
+export type TCursorValueBase = { after: CursorValueType }
 
-export type TCursorBase = TCursorValueBase & { [key: string]: string }
+export type TCursorBase = TCursorValueBase & { [key: string]: CursorValueType }

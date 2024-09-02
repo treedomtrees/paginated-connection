@@ -24,7 +24,7 @@ export type GetEdges<TNode, TCursor> = (
   getCursor: (node: TNode) => TCursor
 ) => Array<PaginatedConnectionEdge<TNode>>
 
-export type DataloaderProps<TNode, TCursor = { after: string }> = {
+export type DataloaderProps<TNode, TCursor = TCursorValueBase> = {
   cursor?: TCursor
   first: number
   encodeCursor: EncodeCursor<TNode, TCursor>
@@ -32,7 +32,7 @@ export type DataloaderProps<TNode, TCursor = { after: string }> = {
   getEdges: GetEdges<TNode, TCursor>
 }
 
-export type CountLoaderProps<TCursor = { after: string }> = { cursor?: TCursor }
+export type CountLoaderProps<TCursor = TCursorValueBase> = { cursor?: TCursor }
 
 export type PaginationInput = {
   after?: string

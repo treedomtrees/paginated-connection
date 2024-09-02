@@ -33,3 +33,32 @@ tap.test("should return empty object when cursor isn't valid", async (t) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   t.same(decodeCursor(1111 as any), {})
 })
+
+tap.test(
+  'should return expected value with custom cursor with all handled value types',
+  async (t) => {
+    const decodedCursor = decodeCursor<{
+      after: string
+      ranking: number
+      enabled: boolean
+    }>('YWZ0ZXI9JTIyMSUyMiZlbmFibGVkPXRydWUmcmFua2luZz0xMTEx')
+    t.same(decodedCursor, {
+      after: '1',
+      enabled: true,
+      ranking: 1111,
+    })
+
+    t.ok(
+      typeof decodedCursor.after === 'string',
+      'should parse correctly string value'
+    )
+    t.ok(
+      typeof decodedCursor.ranking === 'number',
+      'should parse correctly number value'
+    )
+    t.ok(
+      typeof decodedCursor.enabled === 'boolean',
+      'should parse correctly boolean value'
+    )
+  }
+)
